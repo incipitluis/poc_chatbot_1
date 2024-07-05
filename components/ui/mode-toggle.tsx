@@ -19,7 +19,7 @@ export function ModeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="default" size="icon" className="hidden md:flex w-auto p-4 bg-neutral-400 text-neutral-800">
-          How's your mood today?
+          How&apos;s your mood today?
           
           <span className="sr-only">Toggle theme</span>
         </Button>
