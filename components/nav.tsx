@@ -38,7 +38,7 @@ const Nav = () => {
           <Link href="/" className="hover:underline">
             Home
           </Link>
-          <Link href="/gallery">
+          <Link href="/gallery" className="hover:underline">
             Gallery
           </Link>
           <Link href="/about" className="hover:underline">
