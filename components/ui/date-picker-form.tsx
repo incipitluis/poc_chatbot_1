@@ -71,7 +71,6 @@ export function DatePickerForm() {
   }, [selectedDate]);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("Submitting data:", data); // Log de datos enviados
     try {
       await createAppointment(data);
       toast({
@@ -83,7 +82,6 @@ export function DatePickerForm() {
         ),
       });
     } catch (error) {
-      console.error("Error scheduling appointment:", error); // Log de error
       toast({
         title: "Error scheduling appointment",
         description: (
