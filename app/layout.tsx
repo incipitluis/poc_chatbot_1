@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
+import AuthRegisterWrapper from "@/components/auth-register-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Nav />
         {children}
         <Footer />
+        <AuthRegisterWrapper />
         </ThemeProvider>
       </body>
     </html>
