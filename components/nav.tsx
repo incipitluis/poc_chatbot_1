@@ -8,6 +8,12 @@ import { useToggle, useWindowSize } from "react-use";
 import { Button } from './ui/button';
 import { MenuIcon, XIcon } from 'lucide-react';
 import { MobileModeToggle } from './ui/mobile-mode-toggle';
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
 
 const Nav = () => {
   const [isMenuOpen, toggleMenu] = useToggle(false);
@@ -48,6 +54,12 @@ const Nav = () => {
             Reach out!
           </Link>
         </div>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
         <Button
             variant={"secondary"}
             className="rounded-full h-[36px] w-[36px] px-2 md:hidden"
