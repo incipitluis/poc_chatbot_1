@@ -1,36 +1,88 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+# Ink Spot POC
+
+## Overview
+Ink Spot is a Proof of Concept (POC) web application designed to demonstrate the integration of a chatbot, an automated appointment system, and user management using Clerk. This POC aims to showcase the seamless interaction between these components in a tattoo studio setting.
+
+## Features
+- **Chatbot Integration**: A responsive chatbot to assist users with inquiries and provide information.
+- **Automated Appointment System**: Users can schedule and manage their appointments with ease.
+- **Clerk Integration**: Secure user authentication and management using Clerk.
+- **Artistic Community**: Share ideas, designs, and participate in workshops.
+- **Database Integration**: Using Drizzle and Neon Postgres for database management.
+
+## Technologies Used
+- **Next.js**: React framework for server-rendered applications.
+- **TypeScript**: Static type checking for JavaScript.
+- **TailwindCSS**: Utility-first CSS framework for styling.
+- **Clerk**: User authentication and management service.
+- **Chatbot**: Integrated chatbot for user interaction.
+- **Automated Appointment System**: System for managing user appointments.
+- **Drizzle**: Type-safe ORM for managing database operations.
+- **Neon Postgres**: Serverless Postgres database.
+
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js (>=14.x)
+- npm or yarn
+- Clerk account
+- Neon Postgres account
+- OpenAI account
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Installation
+1. Clone the repository
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+    ```sh
+    npm install
+    # or
+    yarn install
+    ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Create a `.env.local` file in the root of the project and add your API keys and database URLs:
+    ```
+    NEXT_PUBLIC_CLERK_FRONTEND_API=<your-clerk-frontend-api>
+    CLERK_API_KEY=<your-clerk-api-key>
+    OPENAI_API_KEY=<your-openai-api-key>
+    NEXT_PUBLIC_DATABASE_URL=<your-neon-postgres-database-url>
+    DATABASE_URL=<your-neon-postgres-database-url>
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. Run the development server:
+    ```sh
+    npm run dev
+    # or
+    yarn dev
+    ```
 
-## Learn More
+5. Open your browser and navigate to `http://localhost:3000`.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
+- Building it
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Components
+- Designing them
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Usage
+- Defining it
 
-## Deploy on Vercel
+## Contributing
+Contributions are welcome! Please follow these steps to contribute:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/your-feature`).
+3. Make your changes and commit them (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a pull request.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Acknowledgements
+- Thanks to the developers of Next.js, TypeScript, TailwindCSS, Clerk, Drizzle, and Neon Postgres for their amazing tools and services.
+
+## Contact
+For any inquiries or feedback, please contact [luisperianezllorente@gmail.com].
+
+---
+
+Enjoy using Ink Spot POC!

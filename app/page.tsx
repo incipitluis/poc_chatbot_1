@@ -6,6 +6,7 @@ import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 
 export default function Home() {
+  
   return (
     <main className="flex flex-col md:flex-row gap-6 min-h-screen p-4 pt-14 md:p-12">
       <div className="md:w-1/3 flex flex-col order-2 md:order-1 space-y-6 md:space-y-20">

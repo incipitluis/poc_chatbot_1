@@ -1,7 +1,7 @@
-'use server'
+'use server';
 
 import { db } from './db';
-import { InsertAppointment, appointmentTable } from './schema';
+import { InsertAppointment, appointmentTable, InsertUser, userTable } from './schema';
 import { eq, and } from 'drizzle-orm';
 
 export async function createAppointment(data: InsertAppointment) {
@@ -22,6 +22,18 @@ export async function getAppointmentsByDate(date: Date) {
   return await db.select().from(appointmentTable)
     .where(eq(appointmentTable.appointmentDate, date));
 }
+
+export async function createUser(data: InsertUser) {
+  const existingUser = await db.select().from(userTable)
+    .where(eq(userTable.clerkUserId, data.clerkUserId));
+
+  if (existingUser.length > 0) {
+    throw new Error('User already exists.');
+  }
+
+  await db.insert(userTable).values(data);
+}
+
 
 /* TODO: hacer check en el cuerpo de la función antes del await, 
 boollean para checkear si existe registro con la misma fecha (y en caso de que sí devolver error, else hacer) */
