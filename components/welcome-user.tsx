@@ -13,7 +13,7 @@ const WelcomeUser: React.FC<WelcomeUserProps> = ({ className }) => {
     return null;
   }
 
-  return <div className={className}>Let's explore creativity together at Ink Spot, {user.firstName}!</div>;
+  return <div className={className}>Let&apos;s explore creativity together at Ink Spot, {user.firstName}!</div>;
 };
 
 export default WelcomeUser;
