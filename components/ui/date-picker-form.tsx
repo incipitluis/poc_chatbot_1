@@ -76,20 +76,23 @@ export function DatePickerForm() {
     try {
       await createAppointment(data);
       toast({
-        title: "Appointment scheduled",
+        title: "",
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <div className="mt-2 w-[340px] bg-black rounded-md p-4 overflow-hidden">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-700 via-red-500 to-slate-200 bg-clip-text text-transparent">Appointment scheduled!</h1>
+            <p className="text-white text-lg">
+              We are looking forward to meeting you &#x2665;
+            </p>
+          </div>
         ),
       });
     } catch (error) {
       toast({
-        title: "Error scheduling appointment",
+        title: "",
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-red-500 p-4">
-            <code className="">{(error as Error).message}</code>
-          </pre>
+          <div className="mt-2 w-[340px] bg-black rounded-md p-4 overflow-hidden">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-900 via-red-500 to-slate-300 bg-clip-text text-transparent">Error!</h1>
+          </div>
         ),
       });
     }
