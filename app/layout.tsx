@@ -5,9 +5,8 @@ import Nav from '../components/nav';
 import Footer from '../components/footer';
 import { ThemeProvider } from "@/components/theme-provider";
 import {
-  ClerkProvider,
+  ClerkProvider, SignedIn,
 } from '@clerk/nextjs'
-import AuthRegisterWrapper from "@/components/auth-register-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,10 +29,11 @@ export default function RootLayout({
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange>
-        <Nav />
+        <SignedIn> 
+           <Nav />
+        </SignedIn>
         {children}
         <Footer />
-        <AuthRegisterWrapper />
         </ThemeProvider>
       </body>
     </html>
