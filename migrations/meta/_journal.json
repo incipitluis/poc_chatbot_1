@@ -22,6 +22,20 @@
       "when": 1721061248090,
       "tag": "0002_giant_scourge",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1721200595224,
+      "tag": "0003_nervous_stephen_strange",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1721210558236,
+      "tag": "0004_omniscient_peter_parker",
+      "breakpoints": true
     }
   ]
 }

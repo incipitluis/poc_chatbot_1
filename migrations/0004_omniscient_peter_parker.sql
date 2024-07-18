@@ -1,0 +1,1 @@
+ALTER TABLE "user_appointment_table" DROP CONSTRAINT "user_appointment_table_clerk_user_id_unique";

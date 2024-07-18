@@ -1,11 +1,12 @@
 'use server';
 
 import { db } from './db';
-import { InsertAppointment, appointmentTable, InsertUser, userTable } from './schema';
+import { InsertAppointment, appointmentTable, InsertUser, userTable, SelectUserAppointment, InsertUserAppointment, userAppointmentTable } from './schema';
 import { eq, and } from 'drizzle-orm';
 
 export async function createAppointment(data: InsertAppointment) {
   const existingAppointment = await db.select().from(appointmentTable)
+
     .where(and(
       eq(appointmentTable.appointmentDate, data.appointmentDate),
       eq(appointmentTable.appointmentTime, data.appointmentTime)
@@ -16,6 +17,14 @@ export async function createAppointment(data: InsertAppointment) {
   }
 
   await db.insert(appointmentTable).values(data);
+
+  const userAppointment = await getUserAppointmentByEmail(data.email)
+  
+  if (userAppointment) {
+    await createUserAppointment(userAppointment)
+  }
+  
+  
 }
 
 export async function getAppointmentsByDate(date: Date) {
@@ -34,6 +43,35 @@ export async function createUser(data: InsertUser) {
   await db.insert(userTable).values(data);
 }
 
+export async function getUserAppointmentByEmail(email: string): Promise<SelectUserAppointment | null> {
+  const result = await db
+    .select({
+      clerkUserId: userTable.clerkUserId,
+      firstName: userTable.firstName,
+      lastName: userTable.lastName,
+      email: appointmentTable.email,
+      phone: appointmentTable.phone,
+      appointmentDate: appointmentTable.appointmentDate,
+      appointmentTime: appointmentTable.appointmentTime,
+    })
+    .from(userTable)
+    .innerJoin(appointmentTable, eq(userTable.email, appointmentTable.email))
+    .where(eq(userTable.email, email))
+    .limit(1);
 
-/* TODO: hacer check en el cuerpo de la función antes del await, 
-boollean para checkear si existe registro con la misma fecha (y en caso de que sí devolver error, else hacer) */
+  if (result.length > 0) {
+    return result[0];
+  } else {
+    return null;
+  }
+}
+
+export async function createUserAppointment(data: InsertUserAppointment) {
+
+const userAppointment = await getUserAppointmentByEmail(data.email)
+
+if (!userAppointment) {
+  throw new Error('No user appointment has been created');
+} 
+await db.insert(userAppointmentTable).values(data);
+}
