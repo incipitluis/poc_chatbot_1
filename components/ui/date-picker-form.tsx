@@ -23,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { createAppointment } from "@/app/queries";
 import { TimePicker } from "./time-picker";
 import { useEffect, useState } from "react";
@@ -58,6 +58,8 @@ export function DatePickerForm() {
       appointmentTime: '',
     }
   });
+
+  const { toast } = useToast()
 
   useEffect(() => {
     async function fetchUnavailableTimes() {
