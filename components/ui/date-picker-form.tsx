@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -18,68 +16,74 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
-import { createAppointment } from "@/app/queries";
-import { TimePicker } from "./time-picker";
+import { createAppointment, getAppointmentsByDateRange } from "@/app/queries";
 import { useEffect, useState } from "react";
-import { getAppointmentsByDate } from "@/app/queries";
+import { useUser } from "@clerk/nextjs";
 
 const FormSchema = z.object({
-  appointmentDate: z.date({
-    required_error: "A date for the appointment is required.",
-  }),
-  name: z.string().nonempty("Name is required"),
-  email: z.string().email("Invalid email address").nonempty("Email is required"),
   phone: z
     .string()
     .regex(/^[0-9]+$/, "Phone number should contain only digits")
-    .nonempty("Phone number is required"),
-  appointmentTime: z.string().nonempty("Tell us when are you coming to meet us")
+    .min(1),
+  appointmentTimestamp: z.date({
+    required_error: "A date and time for the appointment are required."
+  }),
 });
 
 export function DatePickerForm() {
-
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
+  const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
+  const [unavailableTimestamps, setUnavailableTimestamps] = useState<Date[]>([]);
+  const { user } = useUser();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      appointmentDate: undefined,
-      appointmentTime: '',
-    }
+      phone: "",
+      appointmentTimestamp: undefined,
+    },
   });
 
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   useEffect(() => {
-    async function fetchUnavailableTimes() {
-      if (selectedDate) {
-        const appointments = await getAppointmentsByDate(selectedDate);
-        const times = appointments.map(appointment => appointment.appointmentTime);
-        setUnavailableTimes(times);
-      }
+    async function fetchUnavailableTimestamps() {
+      const today = new Date();
+      const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+      const appointments = await getAppointmentsByDateRange(today, oneYearFromNow);  // Supongamos que esta función obtiene todas las citas en el rango
+      const timestamps = appointments.map(
+        (appointment) => new Date(appointment.appointmentTimestamp)
+      );
+      setUnavailableTimestamps(timestamps);
     }
-    fetchUnavailableTimes();
-  }, [selectedDate]);
+    fetchUnavailableTimestamps();
+  }, []);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      await createAppointment(data);
+      if (
+        !user ||
+        !user.firstName ||
+        !user.lastName ||
+        !user.id ||
+        !user.primaryEmailAddress?.emailAddress
+      ) {
+        return;
+      }
+      await createAppointment({
+        ...data,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        clerkUserId: user.id,
+        email: user.primaryEmailAddress.emailAddress,
+      });
       toast({
         title: "",
         description: (
           <div className="mt-2 w-[340px] bg-black rounded-md p-4 overflow-hidden">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-700 via-red-500 to-slate-200 bg-clip-text text-transparent">Appointment scheduled!</h1>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-700 via-red-500 to-slate-200 bg-clip-text text-transparent">
+              Appointment scheduled!
+            </h1>
             <p className="text-white text-lg">
               We are looking forward to meeting you &#x2665;
             </p>
@@ -91,7 +95,9 @@ export function DatePickerForm() {
         title: "",
         description: (
           <div className="mt-2 w-[340px] bg-black rounded-md p-4 overflow-hidden">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-900 via-red-500 to-slate-300 bg-clip-text text-transparent">Error!</h1>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-900 via-red-500 to-slate-300 bg-clip-text text-transparent">
+              Error!
+            </h1>
           </div>
         ),
       });
@@ -99,114 +105,59 @@ export function DatePickerForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="flex flex-col ">
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <input {...field} type="text" className="input" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <input {...field} type="email" className="input" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <input {...field} type="text" className="input" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="appointmentDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col text-white">
-              <FormLabel>Pick a day!</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+    <div>
+      <div className="mb-6 flex flex-col shadow-lg rounded-md">
+        <h2 className="text-xl text-white">
+          Hola holita, {user?.firstName}, ¡rellena el formulario y dinos cuándo
+          pasas a vernos!
+        </h2>
+        <h3 className="text-lg text-white">
+          Te enviaremos una confirmación a {user?.primaryEmailAddress?.emailAddress}.
+        </h3>
+      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Phone</FormLabel>
+                <FormControl>
+                  <input {...field} type="text" className="input" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="appointmentTimestamp"
+            render={({ field }) => (
+              <FormItem className="flex flex-col text-white">
+                <FormLabel>Pick a day and time!</FormLabel>
+                <FormControl>
                   <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={(date) => {
-                      if (date) {
-                        field.onChange(date);
-                        setSelectedDate(date);
-                    }}}
-                    disabled={(date) =>
-                      date < new Date() ||
-                      date > new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-                    }
-                    initialFocus
+                    selectedTimestamp={field.value}
+                    onSelectTimestamp={(timestamp) => {
+                      if (timestamp !== selectedTimestamp) {
+                        field.onChange(timestamp);
+                        setSelectedTimestamp(timestamp);
+                      }
+                    }}
+                    unavailableTimestamps={unavailableTimestamps}
                   />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                We are looking forward to meeting you &#x2665;
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="appointmentTime"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Pick a time!</FormLabel>
-              <FormControl>
-                <TimePicker
-                  selected={selectedTime}
-                  onSelect={(time: string) => {
-                    field.onChange(time);
-                    setSelectedTime(time);
-                  }}
-                  disabledTimes={unavailableTimes}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+                </FormControl>
+                <FormDescription>
+                  We are looking forward to meeting you &#x2665;
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
+    </div>
   );
 }

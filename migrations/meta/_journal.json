@@ -36,6 +36,20 @@
       "when": 1721210558236,
       "tag": "0004_omniscient_peter_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1721374999693,
+      "tag": "0005_petite_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1721382850196,
+      "tag": "0006_aberrant_miracleman",
+      "breakpoints": true
     }
   ]
 }

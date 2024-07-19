@@ -4,6 +4,7 @@ import TextCard from "./ui/text-card";
 import { Button } from "./ui/button";
 import WelcomeUser from "./welcome-user";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Introduction() {
     const { isLoaded, userId } = useAuth();
@@ -27,7 +28,7 @@ return (
             <p>Join us and be part of a vibrant network of artists and enthusiasts.</p>
             <SignInButton>
                 <div className="flex flex-col space-y-4">
-                <Button variant={"secondary"}>Register now </Button>
+                <Button variant="secondary">Register now </Button>
                 <p>and let your imagination take flight!</p>
                 </div>
             </SignInButton>
@@ -35,14 +36,14 @@ return (
             <SignedIn>
             <WelcomeUser className="text-secondary"/>
             <div className="mt-6 flex flex-row items-center gap-4">
-                <Button variant={"secondary"}>
-                <a href="/gallery">Meet our artists</a> 
+                <Button variant="secondary">
+                  <Link href="/gallery">Meet our artists</Link>
                 </Button>
-                <Button variant={"secondary"}> 
-                <a href="">Explore the community</a>
+                <Button variant="secondary"> 
+                <Link href="">Explore the community</Link>
                 </Button>
-                <Button variant={"secondary"}> 
-                <a href="/user-gallery">Share your art</a>
+                <Button variant="secondary"> 
+                <Link href="/user-gallery">Share your art</Link>
                 </Button>
             </div>
             </SignedIn>
