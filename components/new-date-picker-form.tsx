@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/components/new-calendar";
 import {
   Form,
   FormControl,
@@ -18,8 +18,9 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { createAppointment, getAppointmentsByDateRange } from "@/app/queries";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useUnavailableTimestamps } from "../app/lib/use-unavailable-timestamps";
 
 const FormSchema = z.object({
   phone: z
@@ -27,13 +28,13 @@ const FormSchema = z.object({
     .regex(/^[0-9]+$/, "Phone number should contain only digits")
     .min(1),
   appointmentTimestamp: z.date({
-    required_error: "A date and time for the appointment are required."
+    required_error: "A date and time for the appointment are required.",
   }),
 });
 
-export function DatePickerForm() {
+export function ReachUsForm() {
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
-  const [unavailableTimestamps, setUnavailableTimestamps] = useState<Date[]>([]);
+
   const { user } = useUser();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -46,18 +47,7 @@ export function DatePickerForm() {
 
   const { toast } = useToast();
 
-  useEffect(() => {
-    async function fetchUnavailableTimestamps() {
-      const today = new Date();
-      const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
-      const appointments = await getAppointmentsByDateRange(today, oneYearFromNow);  // Supongamos que esta función obtiene todas las citas en el rango
-      const timestamps = appointments.map(
-        (appointment) => new Date(appointment.appointmentTimestamp)
-      );
-      setUnavailableTimestamps(timestamps);
-    }
-    fetchUnavailableTimestamps();
-  }, []);
+  const unavailableTimestamps = useUnavailableTimestamps();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -112,7 +102,8 @@ export function DatePickerForm() {
           pasas a vernos!
         </h2>
         <h3 className="text-lg text-white">
-          Te enviaremos una confirmación a {user?.primaryEmailAddress?.emailAddress}.
+          Te enviaremos una confirmación a{" "}
+          {user?.primaryEmailAddress?.emailAddress}.
         </h3>
       </div>
       <Form {...form}>

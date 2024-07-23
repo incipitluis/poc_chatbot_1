@@ -23,28 +23,35 @@ function Calendar({
   const [selectedDate, setSelectedDate] = React.useState<Date>();
   const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (selectedDate && selectedTime) {
-      const [hours, minutes] = selectedTime.split(":").map(Number);
-      const timestamp = new Date(selectedDate);
-      timestamp.setHours(hours, minutes, 0, 0);
-      if (timestamp.getTime() !== selectedTimestamp?.getTime()) {
-        onSelectTimestamp(timestamp);
-      }
-    } else {
-      onSelectTimestamp(null);
-    }
-  }, [selectedDate, selectedTime, onSelectTimestamp, selectedTimestamp]);
-
   const times = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
-    "18:00", "18:30"
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00",
+    "18:30",
   ];
 
   const today = new Date();
-  const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+  const oneYearFromNow = new Date(
+    today.getFullYear() + 1,
+    today.getMonth(),
+    today.getDate()
+  );
 
   const isDayFullyBooked = (date: Date) => {
     const bookedTimes = unavailableTimestamps.filter(
@@ -53,6 +60,23 @@ function Calendar({
     return bookedTimes.length >= times.length;
   };
 
+  React.useEffect(() => {
+    if (!selectedDate || !selectedTime) {
+      onSelectTimestamp(null);
+      return;
+    }
+
+    const [hours, minutes] = selectedTime.split(":").map(Number);
+    const timestamp = new Date(selectedDate);
+    timestamp.setHours(hours, minutes, 0, 0);
+
+    if (timestamp.getTime() === selectedTimestamp?.getTime()) {
+      return;
+    }
+
+    onSelectTimestamp(timestamp);
+  }, [selectedDate, selectedTime, onSelectTimestamp, selectedTimestamp]);
+
   return (
     <div>
       <DayPicker
@@ -60,10 +84,13 @@ function Calendar({
         onDayClick={(date) => !isDayFullyBooked(date) && setSelectedDate(date)}
         showOutsideDays
         className={cn("p-3", className)}
-        disabled={(date) => date < today || date > oneYearFromNow || isDayFullyBooked(date)}
+        disabled={(date) =>
+          date < today || date > oneYearFromNow || isDayFullyBooked(date)
+        }
         {...props}
         classNames={{
-          months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+          months:
+            "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
           month: "space-y-4",
           caption: "flex justify-center pt-1 relative items-center",
           caption_label: "text-sm font-medium",
@@ -106,17 +133,19 @@ function Calendar({
             Select a time
           </label>
           <select
-            value={selectedTime || ''}
+            value={selectedTime || ""}
             onChange={(e) => setSelectedTime(e.target.value)}
             className="block w-26 p-2.5 bg-gray-50 border border-gray-300 text-gray-900 dark:text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="" disabled>Select a time</option>
+            <option value="" disabled>
+              Select a time
+            </option>
             {times.map((time) => {
               const [hours, minutes] = time.split(":").map(Number);
               const timestamp = new Date(selectedDate);
               timestamp.setHours(hours, minutes, 0, 0);
-              const isUnavailable = unavailableTimestamps.some(unavailable =>
-                unavailable.getTime() === timestamp.getTime()
+              const isUnavailable = unavailableTimestamps.some(
+                (unavailable) => unavailable.getTime() === timestamp.getTime()
               );
               return (
                 <option key={time} value={time} disabled={isUnavailable}>
