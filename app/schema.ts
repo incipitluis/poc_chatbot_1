@@ -2,12 +2,11 @@ import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const appointmentTable = pgTable('appointment_table', {
   id: serial('id').primaryKey(),
-  clerkUserId: text('clerk_user_id').notNull(),
-  firstName: text('first_name').notNull(),
-  lastName: text('last_name').notNull(),
+  name: text('name').notNull(),
   email: text('email').notNull(),
   phone: text('phone').notNull(),
-  appointmentTimestamp: timestamp('appointment_timestamp').notNull().unique(),
+  appointmentDate: timestamp('appointment_date').notNull(),
+  appointmentTime: text('appointment_time').notNull(),
 });
 
 export const userTable = pgTable('user_table', {
@@ -19,8 +18,20 @@ export const userTable = pgTable('user_table', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+export const userAppointmentTable = pgTable('user_appointment_table', {
+  firstName: text('first_name').notNull(),
+  lastName: text('last_name').notNull(),
+  clerkUserId: text('clerk_user_id').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  appointmentDate: timestamp('appointment_date').notNull(),
+  appointmentTime: text('appointment_time').notNull(),
+});
+
 
 export type InsertAppointment = typeof appointmentTable.$inferInsert;
 export type SelectAppointment = typeof appointmentTable.$inferSelect;
 export type InsertUser = typeof userTable.$inferInsert;
 export type SelectUser = typeof userTable.$inferSelect;
+export type InsertUserAppointment = typeof userAppointmentTable.$inferInsert;
+export type SelectUserAppointment = typeof userAppointmentTable.$inferSelect;
