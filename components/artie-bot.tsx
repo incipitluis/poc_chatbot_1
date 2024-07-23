@@ -1,9 +1,11 @@
 'use client'
 import React from 'react';
 import { useChat } from "@ai-sdk/react";
+import MessageRenderer from '@/app/lib/chatbot/message-renderer';
+
 
 export const ArtieBot = () => {
-    const { messages, input, handleInputChange, handleSubmit } = useChat()
+    const { messages, input, handleInputChange, handleSubmit } = useChat();
 
     return (
         <section className="text-center flex flex-col w-full max-w-4xl mx-auto h-2/3 bg-opacity-45 dark:bg-opacity-30 bg-stone-700 dark:bg-gray-800 p-4 md:p-8 rounded-lg shadow-2xl">
@@ -17,7 +19,7 @@ export const ArtieBot = () => {
                             className={`p-3 rounded-lg ${m.role === "user" ? "bg-stone-700 text-white self-end shadow-user" : "bg-gray-600 text-gray-300 self-start shadow-bot"}`}
                         >
                             <span className="font-bold">{m.role === "user" ? "User: " : "Artie: "}</span>
-                            {m.content}
+                            <MessageRenderer message={m.content} />
                         </li>
                     ))}
                 </ul>
@@ -32,5 +34,5 @@ export const ArtieBot = () => {
                 <button type="submit" className="bg-gray-700 text-white px-4 py-3 rounded-lg shadow-md hover:invert transition-colors duration-300">Send</button>
             </form>
         </section>
-    )
-}
+    );
+};

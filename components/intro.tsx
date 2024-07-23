@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import WelcomeUser from "./welcome-user";
 import { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Introduction() {
     const { isLoaded, userId } = useAuth();
@@ -21,6 +22,9 @@ export default function Introduction() {
 return (
 
     <TextCard>
+      <div className="items-center justify-center">
+      <Image src={"/intro.webp"} alt="fotografía del dueño en la entrada del estudio" width={400} height={500}></Image>
+      </div>
             <div className="space-y-4">
                 <p>Welcome to Ink Spot, an artistic community and tattoo studio where creativity flows freely.</p>
                 <p>Here, we share ideas, designs, and finished masterpieces, host engaging workshops, and, of course, create stunning tattoos.</p>  
