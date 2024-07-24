@@ -2,7 +2,7 @@ import { type CoreMessage, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { getAppointmentsByDateRange } from '@/app/queries';
 import generateAvailableSlots from '@/app/lib//chatbot/generate-available-slots';
-import { getKeywordResult } from '../completion/route';
+import { getKeywordResult } from './get-keyword-result';
 
 export const maxDuration = 30;
 
