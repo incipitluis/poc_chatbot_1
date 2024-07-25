@@ -1,10 +1,11 @@
 "use client";
 
-import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { generateTimeSlots } from "@/app/lib/generate-time-slots";
 
 export type CalendarProps = {
   className?: string;
@@ -20,31 +21,10 @@ function Calendar({
   unavailableTimestamps,
   ...props
 }: CalendarProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date>();
-  const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const times = [
-    "09:00",
-    "09:30",
-    "10:00",
-    "10:30",
-    "11:00",
-    "11:30",
-    "12:00",
-    "12:30",
-    "13:00",
-    "13:30",
-    "14:00",
-    "14:30",
-    "15:00",
-    "15:30",
-    "16:00",
-    "16:30",
-    "17:00",
-    "17:30",
-    "18:00",
-    "18:30",
-  ];
+  const times = generateTimeSlots(9, 18, 30);
 
   const today = new Date();
   const oneYearFromNow = new Date(
@@ -60,7 +40,7 @@ function Calendar({
     return bookedTimes.length >= times.length;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!selectedDate || !selectedTime) {
       onSelectTimestamp(null);
       return;
