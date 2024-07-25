@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: CoreMessage[] } = await req.json();
   const lastUserMessage = messages[messages.length - 1].content.toString();
 
-  console.log('Último mensaje del usuario:', lastUserMessage);
+ 
 
   const promptForKeywords = `Interpreta el mensaje del usuario. Si está preguntando sobre citas o tratando de concertar una,
                             responde única y exclusivamente "sí". Si no, responde única y exclusivamente "no". Es importante 
@@ -19,25 +19,25 @@ export async function POST(req: Request) {
 
   const keywordResult = await getKeywordResult(promptForKeywords, lastUserMessage);
 
-  console.log({keywordResult})
+
 
   let prompt = `${lastUserMessage}. Hablas en nombre de InkSpot Tattoo, sé respetuoso y juvenil. Si corresponde, ofrece al usuario ayudarle con las citas, presentándole a nuestros tatuadores o asesorándole respecto al diseño. No te extiendas más de cuarenta palabras.`;
 
   if (keywordResult === 'sí') {
 
-    console.log('El usuario ha preguntado sobre citas o fechas.');
+ 
     
     const today = new Date();
     const twoWeeksFromNow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14);
     const occupiedAppointments = await getAppointmentsByDateRange(today, twoWeeksFromNow);
     const occupiedSlots = occupiedAppointments.map(appointment => new Date(appointment.appointmentTimestamp));
-    console.log('Citas ocupadas obtenidas:', occupiedSlots);
+ 
 
     const availableSlots = generateAvailableSlots(today, twoWeeksFromNow, occupiedSlots);
-    console.log('Horarios disponibles generados:', availableSlots);
+   
 
     const appointmentList = availableSlots.map(slot => slot.toLocaleString()).join(', ');
-    console.log('Lista de citas formateada:', appointmentList);
+ 
 
     prompt = `${lastUserMessage} Citas disponibles en las próximas dos semanas: ${appointmentList}. 
               Usa un formato abreviado, no enumeres todas las citas. 
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
               Si no, di que son las únicas. Añade siempre al final [Contacta con nosotros]`;
   }
 
-  console.log('Prompt enviado a OpenAI:', prompt);
+ 
 
   const result = await streamText({
     model: openai('gpt-3.5-turbo'),

@@ -14,7 +14,7 @@ export const ArtieBot = () => {
       <h3 className="text-xl md:text-2xl font-semibold text-gray-300 mb-6">
         Let our AI find your ideal match
       </h3>
-      <div className="flex flex-col w-full h-80 overflow-auto bg-opacity-90 dark:bg-opacity-90 bg-stone-400 dark:bg-gray-700 p-4 rounded-lg shadow-inner">
+      <div className="flex flex-col w-full h-80 overflow-auto bg-stone-400/90 dark:bg-gray-700/90 p-4 rounded-lg shadow-inner">
         <ul className="flex flex-col space-y-3">
           {messages.map((m, index) => (
             <li
@@ -38,7 +38,7 @@ export const ArtieBot = () => {
           placeholder="Describe your idea"
           value={input}
           onChange={handleInputChange}
-          className="flex-grow bg-opacity-95 dark:bg-opacity-90 dark:bg-gray-600 outline-none dark:text-white p-3 rounded-lg shadow-inner"
+          className="flex-grow bg-opacity-95 dark:bg-gray-600/90 outline-none dark:text-white p-3 rounded-lg shadow-inner"
         />
         <button
           type="submit"

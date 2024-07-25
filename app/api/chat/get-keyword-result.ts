@@ -16,7 +16,7 @@ export async function getKeywordResult(prompt: CoreMessage | string, message: Co
       frequency_penalty: 0,
       presence_penalty: 0,
     });
-console.log({response})
+
     const keywordResult = response.choices[0].text.trim().toLowerCase();
     console.log({keywordResult})
     return keywordResult;
