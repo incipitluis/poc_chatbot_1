@@ -4,9 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/components/new-calendar";
 import {
   Form,
   FormControl,
@@ -18,8 +17,9 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { createAppointment, getAppointmentsByDateRange } from "@/app/queries";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useUnavailableTimestamps } from "../app/lib/use-unavailable-timestamps";
 
 const FormSchema = z.object({
   phone: z
@@ -27,13 +27,17 @@ const FormSchema = z.object({
     .regex(/^[0-9]+$/, "Phone number should contain only digits")
     .min(1),
   appointmentTimestamp: z.date({
-    required_error: "A date and time for the appointment are required."
+    required_error: "A date and time for the appointment are required.",
   }),
 });
 
-export function DatePickerForm() {
+export type ReachUsFormProps = {
+  unavailableTimestamps: Date[];
+};
+
+export function ReachUsForm({ unavailableTimestamps }: ReachUsFormProps) {
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
-  const [unavailableTimestamps, setUnavailableTimestamps] = useState<Date[]>([]);
+
   const { user } = useUser();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -45,19 +49,6 @@ export function DatePickerForm() {
   });
 
   const { toast } = useToast();
-
-  useEffect(() => {
-    async function fetchUnavailableTimestamps() {
-      const today = new Date();
-      const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
-      const appointments = await getAppointmentsByDateRange(today, oneYearFromNow);  // Supongamos que esta función obtiene todas las citas en el rango
-      const timestamps = appointments.map(
-        (appointment) => new Date(appointment.appointmentTimestamp)
-      );
-      setUnavailableTimestamps(timestamps);
-    }
-    fetchUnavailableTimestamps();
-  }, []);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -107,12 +98,13 @@ export function DatePickerForm() {
   return (
     <div>
       <div className="mb-6 flex flex-col shadow-lg rounded-md">
-        <h2 className="text-xl text-white">
+        <h2 className="text-xl text-white dark:bg-black/90 px-2">
           Hola holita, {user?.firstName}, ¡rellena el formulario y dinos cuándo
           pasas a vernos!
         </h2>
-        <h3 className="text-lg text-white">
-          Te enviaremos una confirmación a {user?.primaryEmailAddress?.emailAddress}.
+        <h3 className="text-lg text-white dark:bg-black/90 px-2">
+          Te enviaremos una confirmación a{" "}
+          {user?.primaryEmailAddress?.emailAddress}.
         </h3>
       </div>
       <Form {...form}>
@@ -122,7 +114,9 @@ export function DatePickerForm() {
             name="phone"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Phone</FormLabel>
+                <FormLabel className="dark:bg-black/90 text-white w-14 py-1 px-2">
+                  Phone
+                </FormLabel>
                 <FormControl>
                   <input {...field} type="text" className="input" />
                 </FormControl>
@@ -135,7 +129,9 @@ export function DatePickerForm() {
             name="appointmentTimestamp"
             render={({ field }) => (
               <FormItem className="flex flex-col text-white">
-                <FormLabel>Pick a day and time!</FormLabel>
+                <FormLabel className="dark:bg-black/90 w-40 py-1 px-2">
+                  Pick a day and time!
+                </FormLabel>
                 <FormControl>
                   <Calendar
                     selectedTimestamp={field.value}
@@ -148,9 +144,7 @@ export function DatePickerForm() {
                     unavailableTimestamps={unavailableTimestamps}
                   />
                 </FormControl>
-                <FormDescription>
-                  We are looking forward to meeting you &#x2665;
-                </FormDescription>
+
                 <FormMessage />
               </FormItem>
             )}

@@ -1,10 +1,11 @@
 "use client";
 
-import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { generateTimeSlots } from "@/app/lib/generate-time-slots";
 
 export type CalendarProps = {
   className?: string;
@@ -20,31 +21,17 @@ function Calendar({
   unavailableTimestamps,
   ...props
 }: CalendarProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date>();
-  const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (selectedDate && selectedTime) {
-      const [hours, minutes] = selectedTime.split(":").map(Number);
-      const timestamp = new Date(selectedDate);
-      timestamp.setHours(hours, minutes, 0, 0);
-      if (timestamp.getTime() !== selectedTimestamp?.getTime()) {
-        onSelectTimestamp(timestamp);
-      }
-    } else {
-      onSelectTimestamp(null);
-    }
-  }, [selectedDate, selectedTime, onSelectTimestamp, selectedTimestamp]);
-
-  const times = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
-    "18:00", "18:30"
-  ];
+  const times = generateTimeSlots(9, 18, 30);
 
   const today = new Date();
-  const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+  const oneYearFromNow = new Date(
+    today.getFullYear() + 1,
+    today.getMonth(),
+    today.getDate()
+  );
 
   const isDayFullyBooked = (date: Date) => {
     const bookedTimes = unavailableTimestamps.filter(
@@ -53,18 +40,55 @@ function Calendar({
     return bookedTimes.length >= times.length;
   };
 
+  const handleDateChange = (date: Date) => {
+    if (!isDayFullyBooked(date)) {
+      setSelectedDate(date);
+      updateTimestamp(date, selectedTime);
+    }
+  };
+
+  const handleTimeChange = (time: string) => {
+    setSelectedTime(time);
+    updateTimestamp(selectedDate, time);
+  };
+
+  const updateTimestamp = (date: Date | undefined, time: string | null) => {
+    if (!date || !time) {
+      onSelectTimestamp(null);
+      return;
+    }
+
+    const timestamp = createTimestamp(date, time);
+
+    if (timestamp.getTime() === selectedTimestamp?.getTime()) {
+      return;
+    }
+
+    onSelectTimestamp(timestamp);
+  };
+
+  const createTimestamp = (date: Date, time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const timestamp = new Date(date);
+    timestamp.setHours(hours, minutes, 0, 0);
+    return timestamp;
+  };
+
   return (
     <div>
       <DayPicker
         selected={selectedDate}
-        onDayClick={(date) => !isDayFullyBooked(date) && setSelectedDate(date)}
+        onDayClick={handleDateChange}
         showOutsideDays
         className={cn("p-3", className)}
-        disabled={(date) => date < today || date > oneYearFromNow || isDayFullyBooked(date)}
+        disabled={(date) =>
+          date < today || date > oneYearFromNow || isDayFullyBooked(date)
+        }
         {...props}
         classNames={{
-          months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-          month: "space-y-4",
+          months:
+            "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+          month: "bg-black/95 space-y-4",
           caption: "flex justify-center pt-1 relative items-center",
           caption_label: "text-sm font-medium",
           nav: "space-x-1 flex items-center",
@@ -102,21 +126,21 @@ function Calendar({
       />
       {selectedDate && (
         <div className="mt-4">
-          <label className="block mb-2 text-sm font-medium text-white dark:text-white">
+          <label className="block mb-2 text-sm font-medium text-white dark:text-white dark:bg-black/90 w-28 px-2">
             Select a time
           </label>
           <select
-            value={selectedTime || ''}
-            onChange={(e) => setSelectedTime(e.target.value)}
+            value={selectedTime || ""}
+            onChange={(e) => handleTimeChange(e.target.value)}
             className="block w-26 p-2.5 bg-gray-50 border border-gray-300 text-gray-900 dark:text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="" disabled>Select a time</option>
+            <option value="" disabled>
+              Select a time
+            </option>
             {times.map((time) => {
-              const [hours, minutes] = time.split(":").map(Number);
-              const timestamp = new Date(selectedDate);
-              timestamp.setHours(hours, minutes, 0, 0);
-              const isUnavailable = unavailableTimestamps.some(unavailable =>
-                unavailable.getTime() === timestamp.getTime()
+              const timestamp = createTimestamp(selectedDate, time);
+              const isUnavailable = unavailableTimestamps.some(
+                (unavailable) => unavailable.getTime() === timestamp.getTime()
               );
               return (
                 <option key={time} value={time} disabled={isUnavailable}>

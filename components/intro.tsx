@@ -33,7 +33,7 @@ export default function Introduction() {
           alt="fotografía del dueño en la entrada del estudio"
           width={400}
           height={500}
-          className="mx-auto"
+          className="mx-auto rounded-lg"
         ></Image>
       </div>
       <div className="space-y-4">
@@ -58,7 +58,7 @@ export default function Introduction() {
         </SignedOut>
         <SignedIn>
           <WelcomeUser className="text-secondary dark:text-blue-400" />
-          <div className="mt-6 flex flex-col md:flex-row items-center gap-4">
+          <div className="mt-6 flex flex-col lg:flex-row items-center gap-4">
             <Button variant="secondary">
               <Link href="/gallery">Meet our artists</Link>
             </Button>

@@ -1,30 +1,34 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useTheme } from "next-themes"
+import * as React from "react";
+import { useTheme } from "next-themes";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Moon, Sun } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { Moon, Sun } from "lucide-react";
 
 export function MobileModeToggle() {
-  const { setTheme } = useTheme()
+  const { setTheme } = useTheme();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="icon" className="md:hidden ">
+        <Button
+          variant="secondary"
+          size="icon"
+          className="md:hidden dark:bg-slate-300 dark:text-black"
+        >
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="bg-stone-700 bg-opacity-50 shadow-xl dark:bg-gray-800 text-white">
+      <DropdownMenuContent align="center">
         <DropdownMenuItem onClick={() => setTheme("light")}>
           Bright as f*ck
         </DropdownMenuItem>
@@ -36,5 +40,5 @@ export function MobileModeToggle() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
