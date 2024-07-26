@@ -18,7 +18,7 @@
 /* Root Variables and Backgrounds */
 @layer base {
   :root {
-    background-image: url('/logo.svg'), url('/fondo-1.svg');
+    background-image: url('/logo-fondo.svg'), url('/fondo-1.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -44,7 +44,7 @@
   }
 
   .dark {
-    background-image: url('/logo.svg'), url('/fondo-2.svg');
+    background-image: url('/logo-fondo.svg'), url('/fondo-2.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -89,5 +89,19 @@
   .dark textarea,
   .dark select {
     @apply text-white; /* Ajusta el color del texto en las casillas de formularios en el tema oscuro */
+  }
+}
+
+.loader {
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
