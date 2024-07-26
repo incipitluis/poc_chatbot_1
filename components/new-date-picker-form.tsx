@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/new-calendar";
 import {
@@ -32,7 +31,11 @@ const FormSchema = z.object({
   }),
 });
 
-export function ReachUsForm() {
+export type ReachUsFormProps = {
+  unavailableTimestamps: Date[];
+};
+
+export function ReachUsForm({ unavailableTimestamps }: ReachUsFormProps) {
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
 
   const { user } = useUser();
@@ -46,8 +49,6 @@ export function ReachUsForm() {
   });
 
   const { toast } = useToast();
-
-  const unavailableTimestamps = useUnavailableTimestamps();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -97,11 +98,11 @@ export function ReachUsForm() {
   return (
     <div>
       <div className="mb-6 flex flex-col shadow-lg rounded-md">
-        <h2 className="text-xl text-white">
+        <h2 className="text-xl text-white dark:bg-black/90 px-2">
           Hola holita, {user?.firstName}, ¡rellena el formulario y dinos cuándo
           pasas a vernos!
         </h2>
-        <h3 className="text-lg text-white">
+        <h3 className="text-lg text-white dark:bg-black/90 px-2">
           Te enviaremos una confirmación a{" "}
           {user?.primaryEmailAddress?.emailAddress}.
         </h3>
@@ -113,7 +114,9 @@ export function ReachUsForm() {
             name="phone"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Phone</FormLabel>
+                <FormLabel className="dark:bg-black/90 text-white w-14 py-1 px-2">
+                  Phone
+                </FormLabel>
                 <FormControl>
                   <input {...field} type="text" className="input" />
                 </FormControl>
@@ -126,7 +129,9 @@ export function ReachUsForm() {
             name="appointmentTimestamp"
             render={({ field }) => (
               <FormItem className="flex flex-col text-white">
-                <FormLabel>Pick a day and time!</FormLabel>
+                <FormLabel className="dark:bg-black/90 w-40 py-1 px-2">
+                  Pick a day and time!
+                </FormLabel>
                 <FormControl>
                   <Calendar
                     selectedTimestamp={field.value}
@@ -139,9 +144,7 @@ export function ReachUsForm() {
                     unavailableTimestamps={unavailableTimestamps}
                   />
                 </FormControl>
-                <FormDescription>
-                  We are looking forward to meeting you &#x2665;
-                </FormDescription>
+
                 <FormMessage />
               </FormItem>
             )}
