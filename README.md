@@ -3,13 +3,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 # Ink Spot POC
 
 ## Overview
-Ink Spot is a Proof of Concept (POC) web application designed to demonstrate the integration of a chatbot, an automated appointment system, and user management using Clerk. This POC aims to showcase the seamless interaction between these components in a tattoo studio setting.
+Ink Spot is a Proof of Concept (POC) web application designed to demonstrate the integration of an OpenAI chatbot, an automated appointment system, Drizzle ORM for database management and Clerk for user management. This POC aims to showcase the seamless interaction between these components in a fake and a bit nonsense tattoo studio setting.
 
 ## Features
 - **Chatbot Integration**: A responsive chatbot to assist users with inquiries and provide information.
 - **Automated Appointment System**: Users can schedule and manage their appointments with ease.
 - **Clerk Integration**: Secure user authentication and management using Clerk.
-- **Artistic Community**: Share ideas, designs, and participate in workshops.
 - **Database Integration**: Using Drizzle and Neon Postgres for database management.
 
 ## Technologies Used
@@ -17,7 +16,7 @@ Ink Spot is a Proof of Concept (POC) web application designed to demonstrate the
 - **TypeScript**: Static type checking for JavaScript.
 - **TailwindCSS**: Utility-first CSS framework for styling.
 - **Clerk**: User authentication and management service.
-- **Chatbot**: Integrated chatbot for user interaction.
+- **OpenAI API**: Integrated chatbot for user interaction.
 - **Automated Appointment System**: System for managing user appointments.
 - **Drizzle**: Type-safe ORM for managing database operations.
 - **Neon Postgres**: Serverless Postgres database.
