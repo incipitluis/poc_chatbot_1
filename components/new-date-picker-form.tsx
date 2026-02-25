@@ -1,12 +1,13 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useState } from "react"
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/new-calendar";
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import { createAppointment } from "@/app/queries"
+import { Calendar } from "@/components/new-calendar"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -15,12 +16,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
-import { createAppointment, getAppointmentsByDateRange } from "@/app/queries";
-import { useState } from "react";
-import { useUser } from "@clerk/nextjs";
-import { useUnavailableTimestamps } from "../app/lib/use-unavailable-timestamps";
+} from "@/components/ui/form"
+import { useToast } from "@/components/ui/use-toast"
+import { useUser } from "@clerk/nextjs"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 const FormSchema = z.object({
   phone: z
@@ -30,12 +29,16 @@ const FormSchema = z.object({
   appointmentTimestamp: z.date({
     required_error: "A date and time for the appointment are required.",
   }),
-});
+})
 
-export function ReachUsForm() {
-  const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
+export function ReachUsForm({
+  unavailableTimestamps,
+}: {
+  unavailableTimestamps: Date[]
+}) {
+  const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null)
 
-  const { user } = useUser();
+  const { user } = useUser()
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -43,11 +46,9 @@ export function ReachUsForm() {
       phone: "",
       appointmentTimestamp: undefined,
     },
-  });
+  })
 
-  const { toast } = useToast();
-
-  const unavailableTimestamps = useUnavailableTimestamps();
+  const { toast } = useToast()
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -58,7 +59,7 @@ export function ReachUsForm() {
         !user.id ||
         !user.primaryEmailAddress?.emailAddress
       ) {
-        return;
+        return
       }
       await createAppointment({
         ...data,
@@ -66,7 +67,7 @@ export function ReachUsForm() {
         lastName: user.lastName,
         clerkUserId: user.id,
         email: user.primaryEmailAddress.emailAddress,
-      });
+      })
       toast({
         title: "",
         description: (
@@ -79,7 +80,7 @@ export function ReachUsForm() {
             </p>
           </div>
         ),
-      });
+      })
     } catch (error) {
       toast({
         title: "",
@@ -90,7 +91,7 @@ export function ReachUsForm() {
             </h1>
           </div>
         ),
-      });
+      })
     }
   }
 
@@ -132,8 +133,8 @@ export function ReachUsForm() {
                     selectedTimestamp={field.value}
                     onSelectTimestamp={(timestamp) => {
                       if (timestamp !== selectedTimestamp) {
-                        field.onChange(timestamp);
-                        setSelectedTimestamp(timestamp);
+                        field.onChange(timestamp)
+                        setSelectedTimestamp(timestamp)
                       }
                     }}
                     unavailableTimestamps={unavailableTimestamps}
@@ -150,5 +151,5 @@ export function ReachUsForm() {
         </form>
       </Form>
     </div>
-  );
+  )
 }
